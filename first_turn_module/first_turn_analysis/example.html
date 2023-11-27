@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chat Opener Evaluation</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script>
+        function sortSection(sectionElement) {
+            Array.from(sectionElement.children)
+                .map(function (element) { return { element: element, index: parseInt(element.textContent.match(/\d+/)[0]) }; })
+                .sort(function (a, b) { return a.index - b.index; })
+                .forEach(function (obj) { sectionElement.appendChild(obj.element); });
+        }
+
+        function showActive() {
+            $('.case-response').hide();
+            $('#activePromptSection .dropdown-item').each(function () {
+                $('[data-prompt-id="' + this.id + '"]').show(); // Show only the content for the selected prompt
+            });
+            $('.test-case').hide();
+            $('#activeCaseSection .dropdown-item').each(function () {
+                $('[data-case-id="' + this.id + '"]').show(); // Show only the content for the selected case
+            });
+        }
+
+        function toggleStatus(itemElement) {
+            var activeSectionId = "active" + itemElement.role + "Section";
+            var isActive = itemElement.closest('.collapse').id === activeSectionId;
+            var targetSectionId = isActive ? "in" + activeSectionId : activeSectionId;
+            var targetSection = document.getElementById(targetSectionId);
+
+            // Move to target section
+            targetSection.appendChild(itemElement);
+
+            // Sort prompts in the target section
+            sortSection(targetSection);
+
+            // Show the active prompts related content if the prompt is active
+            showActive();
+        }
+
+    </script>
+    <style>
+        .sticky-top {
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+        }
+
+        .scrollable-menu {
+            height: auto;
+            max-height: 200px;
+            /* Adjust as needed */
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        /* Styles for toggle buttons */
+        .toggle-button {
+            font-weight: bold;
+        }
+
+        /* Subdued styles for prompt items */
+        .prompt-item {
+            padding-left: 20px;
+            /* Indentation for sub-menu items */
+            color: #495057;
+            /* Slightly darker than default Bootstrap text color */
+        }
+
+        .arrow {
+            display: inline-block;
+            width: 0;
+            height: 0;
+            margin-left: 5px;
+            vertical-align: middle;
+            border-top: 5px solid;
+            border-right: 5px solid transparent;
+            border-left: 5px solid transparent;
+        }
+
+        .collapse.show+.dropdown-item .arrow {
+            transform: rotate(180deg);
+            /* Arrow points up when section is expanded */
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Chat Opener Evaluation</a>
+            <ul class="navbar-nav">
+                <!-- Dropdown for Prompts -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPrompts" role="button"
+                        data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                        Prompts
+                    </a>
+                    <ul class="dropdown-menu scrollable-menu" aria-labelledby="navbarDropdownPrompts">
+                        <!-- Active Prompts Section -->
+                        <li>
+                            <a class="dropdown-item" href="#" data-bs-toggle="collapse"
+                                data-bs-target="#activePromptSection">Active Prompts<span class="arrow"></span></a>
+                            <div id="activePromptSection" class="toggle-button collapse show">
+                                <a id='prompt1' class='dropdown-item prompt-item' role='Prompt' data-bs-toggle='popover'
+                                    data-bs-container='body' data-bs-placement='left'
+                                    data-bs-content='Your name is GauchoChat. Do the chat!' href='#'>Prompt 1</a>
+                                <a id='prompt2' class='dropdown-item prompt-item' role='Prompt' data-bs-toggle='popover'
+                                    data-bs-container='body' data-bs-placement='left'
+                                    data-bs-content='Your job is to chat with the user like a friend.' href='#'>Prompt
+                                    2</a>
+                                <a id='prompt3' class='dropdown-item prompt-item' role='Prompt' data-bs-toggle='popover'
+                                    data-bs-container='body' data-bs-placement='left'
+                                    data-bs-content='Chat with human friendly.' href='#'>Prompt 3</a>
+
+                            </div>
+                        </li>
+
+                        <!-- Inactive Prompts Section -->
+                        <li>
+                            <a class="dropdown-item" href="#" data-bs-toggle="collapse"
+                                data-bs-target="#inactivePromptSection">Inactive Prompts<span class="arrow"></span></a>
+                            <div id="inactivePromptSection" class="toggle-button collapse">
+                            </div>
+                        </li>
+
+                    </ul>
+                </li>
+                <!-- Dropdown for Test Cases -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownTestCases" role="button"
+                        data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                        Test Cases
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end scrollable-menu"
+                        aria-labelledby="navbarDropdownTestCases">
+                        <!-- Active Cases Section -->
+                        <li>
+                            <a class="dropdown-item" href="#" data-bs-toggle="collapse"
+                                data-bs-target="#activeCaseSection">Active Cases<span class="arrow"></span></a>
+                            <div id="activeCaseSection" class="toggle-button collapse show">
+                                <a id='case1' class='dropdown-item case-item' role='Case' data-bs-toggle='popover'
+                                    data-bs-container='body' data-bs-placement='left' data-bs-content='Let&#x27;s chat.'
+                                    href='#'>Test Case 1</a>
+                                <a id='case2' class='dropdown-item case-item' role='Case' data-bs-toggle='popover'
+                                    data-bs-container='body' data-bs-placement='left' data-bs-content='How are you?'
+                                    href='#'>Test Case 2</a>
+                                <a id='case3' class='dropdown-item case-item' role='Case' data-bs-toggle='popover'
+                                    data-bs-container='body' data-bs-placement='left'
+                                    data-bs-content='Do you like cats?' href='#'>Test Case 3</a>
+
+                            </div>
+                        </li>
+
+                        <!-- Inctive Cases Section -->
+                        <li>
+                            <a class="dropdown-item" href="#" data-bs-toggle="collapse"
+                                data-bs-target="#inactiveCaseSection">Inactive Cases<span class="arrow"></span></a>
+                            <div id="inactiveCaseSection" class="toggle-button collapse">
+                            </div>
+
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container mt-4">
+        <div id="testCasesContent">
+            <div class='test-case' data-case-id='case1'>
+                <h3>Test Case 1: Let's chat.</h3>
+                <p class='case-response' data-prompt-id='prompt1'>Prompt 1: Absolutely, let's chat! Do you have a
+                    favorite topic or shall we dive into something spontaneous and fun?</p>
+                <p class='case-response' data-prompt-id='prompt2'>Prompt 2: Great! Chatting with friends is always fun.
+                    What's been the highlight of your day so far?</p>
+                <p class='case-response' data-prompt-id='prompt3'>Prompt 3: Sure thing! Chatting is what I do best. Have
+                    you had any interesting experiences lately you'd like to share?</p>
+            </div>
+            <div class='test-case' data-case-id='case2'>
+                <h3>Test Case 2: How are you?</h3>
+                <p class='case-response' data-prompt-id='prompt1'>Prompt 1: I'm just a chatbot, but I'm doing great! How
+                    about you? Anything exciting happening in your world?</p>
+                <p class='case-response' data-prompt-id='prompt2'>Prompt 2: As a friendly chatbot, I'm always in a good
+                    mood! How's your day going? Anything interesting you'd like to share?</p>
+                <p class='case-response' data-prompt-id='prompt3'>Prompt 3: I'm a friendly chatbot, always ready for a
+                    good conversation! How are you feeling today?</p>
+            </div>
+            <div class='test-case' data-case-id='case3'>
+                <h3>Test Case 3: Do you like cats?</h3>
+                <p class='case-response' data-prompt-id='prompt1'>Prompt 1: I think cats are fascinating creatures.
+                    Their independence and grace are admirable. Do you have any pets?</p>
+                <p class='case-response' data-prompt-id='prompt2'>Prompt 2: Cats are quite intriguing, aren't they?
+                    Their personalities vary so much. What do you like most about cats?</p>
+                <p class='case-response' data-prompt-id='prompt3'>Prompt 3: Cats are certainly interesting creatures,
+                    each with their own unique personality. Do you have any stories about cats to share?</p>
+            </div>
+
+        </div>
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+    <script>
+        // Adding click event listeners to prompts
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll('.prompt-item, .case-item').forEach(function (item) {
+                item.addEventListener('click', function () {
+                    toggleStatus(this);
+                });
+            });
+        });
+        $(document).ready(function () {
+            // Listen to collapse events on the collapsible sections
+            $('#activePromptSection, #inactivePromptSection, #activeCaseSection, #inactiveCaseSection').on('show.bs.collapse', function () {
+                // Rotate arrow up when the section is shown
+                $(this).prev('.dropdown-item').find('.arrow').css('transform', 'rotate(180deg)');
+            }).on('hide.bs.collapse', function () {
+                // Rotate arrow down when the section is hidden
+                $(this).prev('.dropdown-item').find('.arrow').css('transform', '');
+            });
+
+            // Show the popover related content
+            $('[data-bs-toggle="popover"]').popover({ trigger: "hover" });
+        });
+
+    </script>
+</body>
+
+</html>
